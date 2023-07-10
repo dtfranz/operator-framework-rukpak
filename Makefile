@@ -117,17 +117,8 @@ E2E_FLAGS ?=
 test-e2e: $(GINKGO) ## Run the e2e tests
 	$(GINKGO) --tags $(GO_BUILD_TAGS) $(E2E_FLAGS) --trace $(FOCUS) test/e2e
 
-# This is for local testing
-test-e2e: KIND_CLUSTER_NAME=rukpak-e2e
-test-e2e: rukpakctl run image-registry local-git kind-load-bundles registry-load-bundles run-e2e kind-cluster-cleanup ## Run e2e tests against an ephemeral kind cluster
-
-# `make e2e` is what is run by the CI:
-# https://github.com/openshift/release/blob/e4afcd7896eb8db041b7290001f39b11155aa22f/ci-operator/config/openshift/operator-framework-rukpak/openshift-operator-framework-rukpak-main.yaml#L63
-e2e: ## Target for CI e2e testing
-	@echo '********************************************'
-	@echo '*      CI/PROW/E2E TESTS ARE DISABLED      *'
-	@echo '* Use "make test-e2e" to test e2e via kind *'
-	@echo '********************************************'
+e2e: KIND_CLUSTER_NAME=rukpak-e2e
+e2e: rukpakctl run image-registry local-git kind-load-bundles registry-load-bundles test-e2e kind-cluster-cleanup ## Run e2e tests against an ephemeral kind cluster
 
 kind-cluster: $(KIND) kind-cluster-cleanup ## Standup a kind cluster
 	$(KIND) create cluster --name ${KIND_CLUSTER_NAME} ${KIND_CLUSTER_CONFIG}
